@@ -2,1063 +2,224 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dotazník pro klienty – Virtuální asistentka</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nikola Biban | Virtuální asistentka – dotazník</title>
 <style>
-  :root {
-    --cream: #FAF7F2;
-    --warm-white: #FFFDF9;
-    --sand: #E8DFD0;
-    --terracotta: #C8714A;
-    --terracotta-light: #D9896A;
-    --forest: #2B3D6B;
-    --forest-light: #3D5490;
-    --ink: #1C1C1C;
-    --muted: #7A7068;
-    --border: #D6CEC3;
-    --success-bg: #EEF1F8;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--ink);
-    min-height: 100vh;
-    padding: 0 0 60px;
-  }
-
-  /* Header */
-  .header {
-    background: var(--forest);
-    color: var(--cream);
-    padding: 48px 24px 40px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: rgba(200,113,74,0.18);
-  }
-  .header::after {
-    content: '';
-    position: absolute;
-    bottom: -40px; left: -40px;
-    width: 140px; height: 140px;
-    border-radius: 50%;
-    background: rgba(200,113,74,0.12);
-  }
-  .header-label {
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: rgba(250,247,242,0.65);
-    margin-bottom: 12px;
-  }
-  .header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(26px, 6vw, 36px);
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 12px;
-  }
-  .header h1 span { color: #D9896A; }
-  .header p {
-    font-size: 14px;
-    color: rgba(250,247,242,0.78);
-    max-width: 380px;
-    margin: 0 auto;
-    line-height: 1.6;
-  }
-
-  /* Progress */
-  .progress-wrap {
-    background: var(--forest);
-    padding: 0 24px 20px;
-  }
-  .progress-bar {
-    height: 3px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--terracotta-light);
-    border-radius: 2px;
-    transition: width 0.5s ease;
-    width: 0%;
-  }
-  .progress-label {
-    font-size: 12px;
-    color: rgba(250,247,242,0.55);
-    margin-top: 8px;
-    text-align: right;
-  }
-
-  /* Steps */
-  .step { display: none; animation: fadeIn 0.4s ease; }
-  .step.active { display: block; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-
-  /* Section card */
-  .section-card {
-    background: var(--warm-white);
-    margin: 20px 16px;
-    border-radius: 16px;
-    padding: 28px 22px;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 12px rgba(28,28,28,0.06);
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--forest);
-    margin-bottom: 4px;
-  }
-  .section-subtitle {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 22px;
-  }
-
-  /* Input field */
-  .field { margin-bottom: 18px; }
-  .field label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 8px;
-  }
-  .field label .req { color: var(--terracotta); margin-left: 2px; }
-  .field input, .field textarea, .field select {
-    width: 100%;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--ink);
-    background: var(--cream);
-    transition: border-color 0.2s;
-    outline: none;
-    -webkit-appearance: none;
-  }
-  .field input:focus, .field textarea:focus, .field select:focus {
-    border-color: var(--forest);
-    background: #fff;
-  }
-  .field textarea { resize: none; min-height: 80px; }
-
-  /* Chip buttons (single select) */
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip {
-    padding: 9px 16px;
-    border-radius: 50px;
-    border: 1.5px solid var(--border);
-    background: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .chip:active { transform: scale(0.97); }
-  .chip.selected {
-    background: var(--forest);
-    border-color: var(--forest);
-    color: #fff;
-    font-weight: 500;
-  }
-
-  /* Toggle cards (multi select) */
-  .toggle-grid { display: flex; flex-direction: column; gap: 10px; }
-  .toggle-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1.5px solid var(--border);
-    background: var(--cream);
-    cursor: pointer;
-    transition: all 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .toggle-card:active { transform: scale(0.99); }
-  .toggle-card.selected {
-    border-color: var(--forest);
-    background: var(--success-bg);
-  }
-  .toggle-check {
-    width: 22px; height: 22px;
-    min-width: 22px;
-    border-radius: 6px;
-    border: 2px solid var(--border);
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    margin-top: 1px;
-  }
-  .toggle-card.selected .toggle-check {
-    background: var(--forest);
-    border-color: var(--forest);
-  }
-  .toggle-check svg { display: none; }
-  .toggle-card.selected .toggle-check svg { display: block; }
-  .toggle-text strong {
-    display: block;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 2px;
-  }
-  .toggle-text span {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.4;
-  }
-
-  /* Info box */
-  .info-box {
-    background: #F0EBE3;
-    border-left: 3px solid var(--terracotta);
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-size: 12.5px;
-    color: var(--muted);
-    margin-bottom: 18px;
-    line-height: 1.5;
-  }
-
-  /* Nav buttons */
-  .nav-wrap {
-    padding: 8px 16px 0;
-    display: flex;
-    gap: 10px;
-  }
-  .btn {
-    flex: 1;
-    padding: 15px;
-    border-radius: 12px;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn:active { transform: scale(0.98); }
-  .btn-primary {
-    background: var(--forest);
-    color: #fff;
-  }
-  .btn-primary:hover { background: var(--forest-light); }
-  .btn-secondary {
-    background: var(--sand);
-    color: var(--muted);
-    flex: 0.55;
-  }
-
-  /* Success screen */
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 60px 24px;
-    animation: fadeIn 0.5s ease;
-  }
-  .success-screen.active { display: block; }
-  .success-icon {
-    width: 72px; height: 72px;
-    background: var(--success-bg);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 24px;
-    font-size: 32px;
-  }
-  .success-screen h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    color: var(--forest);
-    margin-bottom: 12px;
-  }
-  .success-screen p {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-    max-width: 320px;
-    margin: 0 auto 30px;
-  }
-  .summary-box {
-    background: var(--warm-white);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    text-align: left;
-    margin-bottom: 20px;
-  }
-  .summary-row {
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-  }
-  .summary-row:last-child { border-bottom: none; }
-  .summary-row .sr-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-  .summary-row .sr-value { color: var(--ink); font-weight: 500; }
-
-  .btn-whatsapp {
-    width: 100%;
-    padding: 16px;
-    border-radius: 12px;
-    border: none;
-    background: #25D366;
-    color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 10px;
-    letter-spacing: 0.2px;
-  }
-  .btn-email-send {
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1.5px solid var(--forest);
-    background: transparent;
-    color: var(--forest);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-bottom: 6px;
-  }
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1.5px solid var(--forest);
-    background: transparent;
-    color: var(--forest);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-  .btn-restart {
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: none;
-    background: var(--forest);
-    color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-
-  /* Step indicator dots */
-  .dots {
-    display: flex; justify-content: center; gap: 6px;
-    padding: 16px 0 4px;
-  }
-  .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--border);
-    transition: all 0.3s;
-  }
-  .dot.active { background: var(--terracotta); width: 18px; border-radius: 3px; }
-  .dot.done { background: var(--forest); }
-  /* Recommendation box */
-  .rec-box {
-    border-radius: 16px;
-    padding: 22px 20px;
-    margin-bottom: 12px;
-    border: 2px solid transparent;
-  }
-  .rec-box.primary {
-    background: #1E2F5E;
-    border-color: #C8A84B;
-    color: #fff;
-  }
-  .rec-box.secondary {
-    background: #EEF1F8;
-    border-color: #2B3D6B;
-    color: #1C1C1C;
-  }
-  .rec-badge {
-    display: inline-block;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
-  .rec-box.primary .rec-badge { background: #C8A84B; color: #1E2F5E; }
-  .rec-box.secondary .rec-badge { background: #2B3D6B; color: #fff; }
-  .rec-box h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    margin-bottom: 6px;
-  }
-  .rec-box.primary h3 { color: #fff; }
-  .rec-box.secondary h3 { color: #2B3D6B; }
-  .rec-price {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 8px 0 4px;
-  }
-  .rec-box.primary .rec-price { color: #C8A84B; }
-  .rec-box.secondary .rec-price { color: #2B3D6B; }
-  .rec-price-note {
-    font-size: 12px;
-    opacity: 0.75;
-    margin-bottom: 12px;
-  }
-  .rec-features {
-    font-size: 13px;
-    line-height: 1.8;
-    opacity: 0.9;
-  }
-  .rec-features span { display: block; }
-  .rec-start {
-    display: inline-block;
-    margin-top: 12px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .rec-box.primary .rec-start { background: rgba(200,168,75,0.2); color: #C8A84B; }
-  .rec-box.secondary .rec-start { background: rgba(43,61,107,0.12); color: #2B3D6B; }
-  .rec-ro {
-    background: linear-gradient(135deg, #1E2F5E, #2B3D6B);
-    border-radius: 12px;
-    padding: 16px 18px;
-    color: #fff;
-    margin-top: 10px;
-  }
-  .rec-ro-flag { font-size: 18px; margin-bottom: 4px; }
-  .rec-ro h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  .rec-ro p { font-size: 12px; opacity: 0.8; line-height: 1.5; }
-  .rec-ro .rec-price { font-size: 18px; margin: 6px 0 0; color: #C8A84B; }
+:root{--sans:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;--serif:Georgia,'Times New Roman',serif;--navy:#0B1B2E;--blue:#1F5A8C;--blue-d:#174669;--bg:#F4F6F9;--card:#fff;--line:#D5DDE6;--mute:#5B6B7D;--soft:#EAF1F8;--err:#B3261E}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--navy);line-height:1.6;font-size:16px}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 56px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.mono{flex:none;width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;font:700 18px var(--serif);display:grid;place-items:center;letter-spacing:-1px}
+.brand b{display:block;font-weight:500;font-size:14px;line-height:1.3}
+.brand span{font-size:12px;color:var(--mute);display:block;line-height:1.3}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff;flex:none}
+.lang button{border:0;background:none;font:500 13px var(--sans);padding:8px 14px;min-height:40px;color:var(--mute);cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--navy);color:#fff}
+.hero{background:var(--navy);color:#fff;border-radius:18px;padding:36px 28px;margin-bottom:20px}
+.hero h1{font:600 clamp(26px,6vw,36px)/1.2 var(--serif);margin-bottom:12px}
+.hero .sub{font-size:17px;color:#D7E4F2;margin-bottom:12px;font-weight:300}
+.hero .txt{font-size:14px;color:#AFC4D9;font-weight:300;max-width:56ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 22px}
+.prog{height:4px;background:var(--line);border-radius:4px;margin:0 0 8px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--blue);transition:width .3s}
+.stepno{font-size:13px;color:var(--mute);margin-bottom:18px}
+h2{font:600 22px/1.3 var(--serif);margin-bottom:4px}
+.lead{color:var(--mute);font-size:14px;margin-bottom:22px}
+.f{margin-bottom:22px;border:0}
+.f>label,.f>legend{display:block;font-weight:500;font-size:15px;margin-bottom:8px}
+.opt-tag{font-weight:300;color:var(--mute);font-size:13px;margin-left:6px}
+.req{color:var(--blue);font-weight:600}
+input[type=text],textarea{width:100%;font:400 16px var(--sans);color:var(--navy);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff}
+textarea{min-height:96px;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible,.opt input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts.list{flex-direction:column}
+.opt{position:relative;display:block}
+.opt input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
+.opt span{display:block;border:1.5px solid var(--line);border-radius:10px;padding:11px 16px;font-size:14px;background:#fff;min-height:44px}
+.opts.list .opt span{padding:13px 16px}
+.opt small{display:block;color:var(--mute);font-size:12.5px;font-weight:300}
+.opt input:checked+span{border-color:var(--blue);background:var(--soft);font-weight:500}
+.hint{font-size:13px;color:var(--mute);background:var(--soft);border-radius:10px;padding:12px 14px;margin-bottom:22px}
+.priv{font-size:13px;color:var(--mute);border-left:3px solid var(--blue);padding:4px 0 4px 14px;margin-bottom:14px}.priv summary{cursor:pointer;font-weight:500;color:var(--navy);font-size:14px}.priv p{margin-top:8px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.consent input{width:22px;height:22px;margin-top:2px;flex:none;accent-color:var(--blue)}
+.err{color:var(--err);font-size:13px;margin-top:6px;min-height:0}
+.invalid input[type=text]{border-color:var(--err)}
+.nav{display:flex;gap:10px;margin-top:8px}
+.btn{font:500 16px var(--sans);border-radius:10px;border:0;padding:14px 22px;min-height:48px;cursor:pointer;flex:1}
+.btn.p{background:var(--blue);color:#fff}.btn.p:hover{background:var(--blue-d)}
+.btn.s{background:#fff;color:var(--navy);border:1.5px solid var(--line);flex:.6}
+.btn:disabled{opacity:.6;cursor:wait}
+.alert{background:#FDECEA;color:var(--err);border-radius:10px;padding:14px;font-size:14px;margin-bottom:14px}
+.alert a{color:var(--err);font-weight:500}
+.done{text-align:center;padding:40px 12px}
+.done .mono{margin:0 auto 18px;width:56px;height:56px}
+.done p{color:var(--mute);max-width:44ch;margin:10px auto 22px}
+.foot{text-align:center;font-size:12px;color:var(--mute);margin-top:22px}
+.hp{position:absolute;left:-9999px}
+@media(max-width:480px){.hero{padding:28px 20px}.card{padding:22px 16px}.brand span{display:none}.nav{flex-direction:column-reverse}.btn.s{flex:1}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-
-<div class="header">
-  <div style="width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;background:rgba(255,255,255,0.08);box-shadow:0 4px 24px rgba(0,0,0,0.18);">
-  <div style="font-family:'Playfair Display',serif;font-size:42px;color:#fff;line-height:1;letter-spacing:-2px;font-weight:700;">NŠ</div>
-  <div style="font-size:8px;letter-spacing:2.5px;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-top:4px;">VA</div>
-</div>
-  <h1>Dotazník pro<br><span>nové klienty</span></h1><div style="font-size:13px;color:rgba(250,247,242,0.7);margin-top:4px;">Chestionar pentru <span style="color:#D9896A;">clienți noi</span></div>
-  <p>Vybírejte kliknutím – žádné dlouhé psaní. Vyplnění trvá asi 3 minuty.<br><span style="opacity:0.75;">Selectați cu un click – fără scriere lungă. Durează ~3 minute.</span></p>
-</div>
-
-<div class="progress-wrap">
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-  <div class="progress-label" id="progressLabel">Krok 1 z 5</div>
-</div>
-
-<div class="dots" id="dots">
-  <div class="dot active" id="dot0"></div>
-  <div class="dot" id="dot1"></div>
-  <div class="dot" id="dot2"></div>
-  <div class="dot" id="dot3"></div>
-  <div class="dot" id="dot4"></div>
-</div>
-
-<!-- STEP 1: Základní informace -->
-<div class="step active" id="step0">
-  <div class="section-card">
-    <div class="section-title">1. O vás · Despre dvs.</div>
-    <div class="section-subtitle">Základní informace · Informații de bază</div>
-
-    <div class="field">
-      <label>Jméno a příjmení / Název firmy <span class="req">*</span><br><span style="font-weight:300;font-size:11px;color:#7A7068;">Nume și prenume / Denumirea firmei</span></label>
-      <input type="text" id="name" placeholder="Jana Nováková / Firma s.r.o.">
-    </div>
-
-    <div class="field">
-      <label>Předmět podnikání · <span style="font-weight:300;font-size:11px;">Obiectul de activitate</span></label>
-      <input type="text" id="business" placeholder="Čím se zabýváte? / Cu ce vă ocupați?">
-    </div>
-
-    <div class="field">
-      <label>Typ subjektu · <span style="font-weight:300;font-size:11px;">Tipul entității</span></label>
-      <div class="chips" id="typeChips">
-        <div class="chip" data-val="osvc_cz">🇨🇿 OSVČ – CZ</div>
-        <div class="chip" data-val="osvc_ro">🇷🇴 PFA / II – RO</div>
-        <div class="chip" data-val="sro">s.r.o.</div>
-        <div class="chip" data-val="firma">Firma (jiná)</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Preferovaný jazyk · <span style="font-weight:300;font-size:11px;">Limba preferată de comunicare</span></label>
-      <div class="chips" id="langChips">
-        <div class="chip" data-val="cs">🇨🇿 Čeština / Cehă</div>
-        <div class="chip" data-val="ro">🇷🇴 Română / Rumunština</div>
-        <div class="chip" data-val="mix">🌍 Kombinace / Combinat</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Kontakt (e-mail nebo telefon) <span class="req">*</span><br><span style="font-weight:300;font-size:11px;color:#7A7068;">Contact (e-mail sau telefon)</span></label>
-      <input type="text" id="contact" placeholder="jan@email.cz / +420 777 000 000">
-    </div>
-  </div>
-  <div class="nav-wrap">
-    <button class="btn btn-primary" onclick="nextStep()">Pokračovat / Continuați →</button>
-  </div>
-</div>
-
-<!-- STEP 2: Administrativa -->
-<div class="step" id="step1">
-  <div class="section-card">
-    <div class="section-title">2. Administrativa · Administrație</div>
-    <div class="section-subtitle">S čím chcete pomoci? Vyberte vše, co se vás týká.<br><span style="font-size:11px;font-weight:300;">Cu ce doriți ajutor? Selectați tot ce vi se potrivește.</span></div>
-
-    <div class="toggle-grid" id="adminChecks">
-      <div class="toggle-card" data-val="faktury">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Vystavování faktur · Facturare</strong><span>Tvorba a odesílání / Emiterea și trimiterea facturilor</span></div>
-      </div>
-      <div class="toggle-card" data-val="doklady">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Evidence dokladů · Evidența documentelor</strong><span>Třídění účtenek / Sortarea chitanțelor și facturilor</span></div>
-      </div>
-      <div class="toggle-card" data-val="ucetni_podklady">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Podklady pro účetní · Documente pentru contabil</strong><span>Měsíční / kvartální · Lunar sau trimestrial</span></div>
-      </div>
-      <div class="toggle-card" data-val="splatnosti">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Kontrola splatností · Urmărirea scadențelor</strong><span>Hlídání faktur / Monitorizarea și reamintirea datornicilor</span></div>
-      </div>
-      <div class="toggle-card" data-val="cashflow">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Přehledy příjmů a výdajů · Situația veniturilor</strong><span>Cashflow, reporty / Rapoarte de flux financiar</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="nav-wrap">
-    <button class="btn btn-secondary" onclick="prevStep()">← Zpět / Înapoi</button>
-    <button class="btn btn-primary" onclick="nextStep()">Pokračovat / Continuați →</button>
-  </div>
-</div>
-
-<!-- STEP 3: Účetní + RO modul -->
-<div class="step" id="step2">
-  <div class="section-card">
-    <div class="section-title">3. Navazující služby · Servicii suplimentare</div>
-    <div class="section-subtitle">Co dalšího by se vám hodilo? · Ce altceva v-ar fi util?</div>
-
-    <div class="info-box">
-      💡 Spolupracuji s osvědčenou účetní – mohu vás propojit.<br><em>Colaborez cu un contabil de încredere – vă pot pune în legătură.</em>
-    </div>
-
-    <div class="toggle-grid" id="extraChecks">
-      <div class="toggle-card" data-val="ucetni_odkaz">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Zájem o doporučení účetní · Recomandare contabil</strong><span>Propojím vás s účetní / Vă recomand contabilul cu care colaborez</span></div>
-      </div>
-      <div class="toggle-card" data-val="preklad_dokumenty">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Překlady dokumentů · Traduceri documente (CZ ↔ RO)</strong><span>Neformální překlady / Traduceri informale ale materialelor de afaceri</span></div>
-      </div>
-      <div class="toggle-card" data-val="urady_ro">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Výklad CZ povinností · Explicarea obligațiilor CZ</strong><span>Pomoc s úřady / Ajutor cu înțelegerea regulilor și instituțiilor cehe</span></div>
-      </div>
-      <div class="toggle-card" data-val="komunikace_urady">
-        <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="toggle-text"><strong>Komunikace s CZ úřady · Comunicare cu instituții CZ</strong><span>E-maily, dopisy / E-mailuri, scrisori, telefoane</span></div>
-      </div>
-
-    </div>
-  </div>
-  <div class="nav-wrap">
-    <button class="btn btn-secondary" onclick="prevStep()">← Zpět / Înapoi</button>
-    <button class="btn btn-primary" onclick="nextStep()">Pokračovat / Continuați →</button>
-  </div>
-</div>
-
-<!-- STEP 4: Technické -->
-<div class="step" id="step3">
-  <div class="section-card">
-    <div class="section-title">4. Technické detaily · Detalii tehnice</div>
-    <div class="section-subtitle">Jak to u vás funguje? · Cum funcționează la dvs.?</div>
-
-    <div class="field">
-      <label>Fakturační systém · <span style="font-weight:300;font-size:11px;">Sistemul de facturare</span></label>
-      <div class="chips" id="sysChips">
-        <div class="chip" data-val="fakturoid">Fakturoid</div>
-        <div class="chip" data-val="idoklad">iDoklad</div>
-        <div class="chip" data-val="excel">Excel</div>
-        <div class="chip" data-val="papir">Papír / Manual</div>
-        <div class="chip" data-val="jiny">Jiný</div>
-        <div class="chip" data-val="zadny">Žádný / Niciunul</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Průměrný počet faktur / dokladů za měsíc · <span style="font-weight:300;font-size:11px;">Nr. mediu de facturi / lună</span></label>
-      <div class="chips" id="volChips">
-        <div class="chip" data-val="do20">Do 20</div>
-        <div class="chip" data-val="20-50">20–50</div>
-        <div class="chip" data-val="50+">50+</div>
-        <div class="chip" data-val="nevim">Netuším / Nu știu</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Jak si předáváme doklady? · <span style="font-weight:300;font-size:11px;">Cum schimbăm documentele?</span></label>
-      <div class="chips" id="predaniChips">
-        <div class="chip" data-val="email">📧 E-mail</div>
-        <div class="chip" data-val="whatsapp">💬 WhatsApp</div>
-        <div class="chip" data-val="cloud">☁️ Cloud/Drive</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Odhadovaný rozsah spolupráce · <span style="font-weight:300;font-size:11px;">Volumul estimat al colaborării</span></label>
-      <div class="chips" id="rozsahChips">
-        <div class="chip" data-val="narazove">Nárazově / Ocazional</div>
-        <div class="chip" data-val="2h_tyden">~2 hod/týden · ~2 ore/săpt.</div>
-        <div class="chip" data-val="pravidelne">Pravidelně / Lunar regulat</div>
-        <div class="chip" data-val="nevim">Ještě nevím / Nu știu încă</div>
-      </div>
-    </div>
-  </div>
-  <div class="nav-wrap">
-    <button class="btn btn-secondary" onclick="prevStep()">← Zpět / Înapoi</button>
-    <button class="btn btn-primary" onclick="nextStep()">Pokračovat / Continuați →</button>
-  </div>
-</div>
-
-<!-- STEP 5: Očekávání -->
-<div class="step" id="step4">
-  <div class="section-card">
-    <div class="section-title">5. Vaše priority · Prioritățile dvs.</div>
-    <div class="section-subtitle">Poslední krok – co je pro vás klíčové?<br><span style="font-size:11px;font-weight:300;">Ultimul pas – ce este esențial pentru dvs.?</span></div>
-
-    <div class="field">
-      <label>Co je pro vás u asistentky nejdůležitější?<br><span style="font-weight:300;font-size:11px;color:#7A7068;">Ce este cel mai important pentru dvs. la o asistentă?</span></label>
-      <div class="toggle-grid" id="priorityChecks">
-        <div class="toggle-card" data-val="rychlost">
-          <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="toggle-text"><strong>⚡ Rychlost · Viteză</strong><span>Rychlé reakce / Răspunsuri și livrare rapidă</span></div>
-        </div>
-        <div class="toggle-card" data-val="peclivost">
-          <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="toggle-text"><strong>🎯 Pečlivost · Acuratețe</strong><span>Bezchybná práce / Lucru fără erori</span></div>
-        </div>
-        <div class="toggle-card" data-val="jazyky">
-          <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="toggle-text"><strong>🌍 Dvojjazyčnost · Bilingvism CZ/RO</strong><span>Komunikace v obou jazycích / Comunicare în ambele limbi</span></div>
-        </div>
-        <div class="toggle-card" data-val="diskretnost">
-          <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="toggle-text"><strong>🔒 Diskrétnost · Discreție</strong><span>Důvěra a ochrana dat / Confidențialitate și protecția datelor</span></div>
-        </div>
-        <div class="toggle-card" data-val="cena">
-          <div class="toggle-check"><svg width="12" height="10" viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="toggle-text"><strong>💰 Rozumná cena · Preț rezonabil</strong><span>Dobrý poměr ceny a výkonu / Raport bun calitate-preț</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Od kdy byste chtěl/a začít? · <span style="font-weight:300;font-size:11px;">De când doriți să începeți?</span></label>
-      <div class="chips" id="startChips">
-        <div class="chip" data-val="ihned">Co nejdříve / Cât mai curând</div>
-        <div class="chip" data-val="mesic">Do měsíce / Într-o lună</div>
-        <div class="chip" data-val="3mesice">Za 2–3 měsíce / Peste 2–3 luni</div>
-        <div class="chip" data-val="pouze_info">Jen zjišťuji / Doar mă informez</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Cokoli dalšího (volitelné) · <span style="font-weight:300;font-size:11px;">Orice altceva (opțional)</span></label>
-      <textarea id="poznamka" placeholder="Doplňující informace, otázky... / Informații suplimentare, întrebări..."></textarea>
-    </div>
-  </div>
-  <div class="nav-wrap">
-    <button class="btn btn-secondary" onclick="prevStep()">← Zpět / Înapoi</button>
-    <button class="btn btn-primary" onclick="submitForm()">Odeslat / Trimiteți ✓</button>
-  </div>
-</div>
-
-<!-- SUCCESS -->
-<div class="success-screen" id="successScreen">
-  <div class="success-icon">🎉</div>
-  <h2>Hotovo, děkuji! · Mulțumesc!</h2>
-  <p>Na základě vašich odpovědí jsem připravila doporučení.<br><span style="font-size:13px;color:#7A7068;">Pe baza răspunsurilor dvs. am pregătit o recomandare.</span><br><br>Pro dokončení prosím pošlete shrnutí přes WhatsApp nebo e-mail.<br><span style="font-size:13px;color:#7A7068;">Vă rugăm să trimiteți rezumatul prin WhatsApp sau e-mail.</span></p>
-
-  <!-- DOPORUČENÍ BALÍČKU -->
-  <div id="recommendationBox" style="margin-bottom:20px;text-align:left;"></div>
-
-  <!-- WhatsApp tlačítko -->
-  <button class="btn-whatsapp" onclick="sendWhatsApp()">💬 Poslat přes WhatsApp / Trimiteți pe WhatsApp</button>
-  <button class="btn-email-send" onclick="sendEmail()">✉️ Poslat e-mailem / Trimiteți pe e-mail</button>
-
-  <!-- SHRNUTÍ -->
-  <div style="font-size:12px;color:#7A7068;text-align:left;margin:18px 0 8px;text-transform:uppercase;letter-spacing:0.5px;">Vaše odpovědi</div>
-  <div class="summary-box" id="summaryBox"></div>
-
-  <button class="btn-copy" onclick="copyResults()">📋 Zkopírovat / Copiați răspunsurile</button>
-  <button class="btn-restart" onclick="restartForm()">Vyplnit znovu / Completați din nou</button>
-</div>
-
+<div class="wrap" id="app"></div>
 <script>
-  let currentStep = 0;
-  const totalSteps = 5;
-  const formData = {};
+/* ===== NASTAVENÍ / CONFIG ===== */
+const EMAIL = 'subova_nikola@seznam.cz';
+const CTRL = { name:'Nikola Biban', ico:'', addr:'' };   // IČO a adresu doplňte, až je budete mít / chcete uvést
+const RETENTION = { cs:'12 měsíců od posledního kontaktu, pokud nedojde ke spolupráci. Při spolupráci po dobu spolupráce a po dobu, kterou vyžadují právní předpisy.', ro:'12 luni de la ultimul contact, dacă nu se ajunge la colaborare. În caz de colaborare, pe durata acesteia și cât impun dispozițiile legale.' };
 
-  // Single-select chips
-  function initChips(containerId, key) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    container.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        container.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-        chip.classList.add('selected');
-        formData[key] = chip.dataset.val;
-      });
-    });
-  }
+/* ===== TEXTY ===== */
+const T = {
+ cs:{role:'Virtuální asistentka',h1:'Pojďme si usnadnit administrativu',sub:'Pomozte mi lépe poznat vaše podnikání a zjistit, s čím vám mohu pomoci.',txt:'Dotazník je nezávazný první kontakt. Vaše odpovědi mi pomohou posoudit možnosti případné spolupráce a domluvit další kroky.',time:'Vyplnění zabere asi 3 minuty. Hvězdička * označuje povinné pole.',step:(a,b)=>`Krok ${a} z ${b}`,next:'Pokračovat',back:'Zpět',send:'Připravit e-mail',sending:'Odesílám…',optional:'nepovinné',
+  eType:'Vyberte prosím, kdo jste.',eName:'Vyplňte prosím jméno nebo název firmy.',eContact:'Zadejte platný e-mail nebo telefonní číslo.',eConsent:'Pro odeslání potvrďte, že jste se seznámil/a s informacemi o zpracování údajů.',
+  privSum:'Informace o zpracování osobních údajů',consent:'Seznámil/a jsem se s informacemi o zpracování osobních údajů.',
+  priv:()=>`<p><b>Správce:</b> ${[CTRL.name,CTRL.ico&&'IČO '+CTRL.ico,CTRL.addr,'e-mail '+EMAIL].filter(Boolean).join(', ')}.</p><p><b>Účel a právní základ:</b> odpověď na vaši poptávku a příprava případné spolupráce (čl. 6 odst. 1 písm. b) GDPR – opatření před uzavřením smlouvy na vaši žádost); případně oprávněný zájem na vedení evidence poptávek (písm. f).</p><p><b>Jak údaje putují:</b> formulář nic neodesílá na žádný server a údaje neukládá. Zadané údaje zůstávají jen ve vašem prohlížeči, dokud sami neodešlete e-mail, který se vám otevře ve vaší e-mailové aplikaci. Údaje mi tedy poskytujete vy sami e-mailem.</p><p><b>Které údaje:</b> jméno nebo název firmy, kontakt a odpovědi, které sami uvedete. Jméno a kontakt jsou nutné, abych vám mohla odpovědět; ostatní údaje jsou dobrovolné. Nezadávejte prosím citlivé údaje ani osobní údaje třetích osob.</p><p><b>Příjemci:</b> e-mail obdržím do schránky u poskytovatele Seznam.cz, a.s. Údaje neprodávám ani je nepoužívám k marketingu. Stránka je hostována na GitHub Pages; poskytovatel může při zobrazení stránky zaznamenávat technické údaje, například IP adresu.</p><p><b>Doba uchování:</b> ${RETENTION.cs}</p><p><b>Vaše práva:</b> přístup, oprava, výmaz, omezení zpracování, přenositelnost údajů a námitka – stačí napsat na e-mail výše. Máte právo podat stížnost u Úřadu pro ochranu osobních údajů (uoou.gov.cz). Nedochází k automatizovanému rozhodování ani profilování.</p><p>Poslední aktualizace: říjen 2026.</p>`,
+  fail:'Odeslání se nepodařilo. Zkontrolujte připojení a zkuste to znovu, nebo mi odpovědi pošlete přímo:',
+  manH:'E-mail je připravený',manP:'Dotazník jsem ještě neodeslala – zprávu musíte odeslat sami. Otevřete ji ve své e-mailové aplikaci, nebo ji zkopírujte a pošlete na adresu níže.',mailHint:'Dotazník se neodesílá automaticky. Po kliknutí se vám otevře e-mail se zprávou, který odešlete sami.',openMail:'Otevřít e-mail',copyMsg:'Zkopírovat zprávu',copied:'Zkopírováno',okH:'Děkuji, odpovědi jsem přijala',okP:'Ozvu se vám na uvedený kontakt a domluvíme další kroky.',again:'Vyplnit znovu',foot:'Nikola Biban | Virtuální asistentka · Administrativní podpora pro podnikatele a firmy',mail:'E-mail',intro:'Dobrý den, posílám vyplněný dotazník:'},
+ ro:{role:'Asistentă virtuală',h1:'Să ne ușurăm munca administrativă',sub:'Ajutați-mă să vă cunosc mai bine afacerea și să aflu cu ce vă pot sprijini.',txt:'Chestionarul este un prim contact fără obligații. Răspunsurile dvs. mă ajută să evaluez posibilitățile de colaborare și să stabilim pașii următori.',time:'Completarea durează aproximativ 3 minute. Steluța * marchează câmpurile obligatorii.',step:(a,b)=>`Pasul ${a} din ${b}`,next:'Continuați',back:'Înapoi',send:'Pregătește e-mailul',sending:'Se trimite…',optional:'opțional',
+  eType:'Selectați vă rugăm cine sunteți.',eName:'Vă rugăm să completați numele sau denumirea firmei.',eContact:'Introduceți o adresă de e-mail sau un număr de telefon valid.',eConsent:'Pentru a trimite, confirmați că ați luat cunoștință de informațiile privind prelucrarea datelor.',
+  privSum:'Informații privind prelucrarea datelor personale',consent:'Am luat cunoștință de informațiile privind prelucrarea datelor cu caracter personal.',
+  priv:()=>`<p><b>Operator:</b> ${[CTRL.name,CTRL.ico&&'IČO '+CTRL.ico,CTRL.addr,'e-mail '+EMAIL].filter(Boolean).join(', ')}.</p><p><b>Scop și temei juridic:</b> răspunsul la solicitarea dvs. și pregătirea unei eventuale colaborări (art. 6 alin. 1 lit. b) GDPR – măsuri precontractuale la cererea dvs.); eventual interesul legitim de a ține evidența solicitărilor (lit. f).</p><p><b>Cum circulă datele:</b> formularul nu trimite nimic către vreun server și nu stochează datele. Datele introduse rămân doar în browserul dvs. până când trimiteți dvs. e-mailul care se deschide în aplicația de e-mail. Prin urmare, îmi transmiteți datele dvs. prin e-mail.</p><p><b>Ce date:</b> numele sau denumirea firmei, datele de contact și răspunsurile pe care le completați. Numele și contactul sunt necesare pentru a vă putea răspunde; restul datelor sunt facultative. Vă rugăm să nu introduceți date sensibile sau date personale ale altor persoane.</p><p><b>Destinatari:</b> e-mailul ajunge într-o căsuță la furnizorul Seznam.cz, a.s. Nu vând datele și nu le folosesc în scopuri de marketing. Pagina este găzduită pe GitHub Pages; furnizorul poate înregistra la afișarea paginii date tehnice, de exemplu adresa IP.</p><p><b>Perioada de păstrare:</b> ${RETENTION.ro}</p><p><b>Drepturile dvs.:</b> acces, rectificare, ștergere, restricționare, portabilitatea datelor și opoziție – scrieți-mi la adresa de e-mail de mai sus. Aveți dreptul de a depune o plângere la Úřad pro ochranu osobních údajů (uoou.gov.cz) sau la autoritatea din țara dvs. Nu există decizii automatizate sau creare de profiluri.</p><p>Ultima actualizare: octombrie 2026.</p>`,
+  fail:'Trimiterea nu a reușit. Verificați conexiunea și încercați din nou sau trimiteți-mi răspunsurile direct:',
+  manH:'E-mailul este pregătit',manP:'Chestionarul nu a fost încă trimis – mesajul trebuie să îl trimiteți dvs. Deschideți-l în aplicația de e-mail sau copiați-l și trimiteți-l la adresa de mai jos.',mailHint:'Chestionarul nu se trimite automat. După clic se deschide un e-mail cu mesajul, pe care îl trimiteți dvs.',openMail:'Deschide e-mailul',copyMsg:'Copiază mesajul',copied:'Copiat',okH:'Mulțumesc, am primit răspunsurile',okP:'Vă voi contacta la datele indicate și stabilim pașii următori.',again:'Completați din nou',foot:'Nikola Biban | Asistentă virtuală · Suport administrativ pentru antreprenori și firme',mail:'E-mail',intro:'Bună ziua, vă trimit chestionarul completat:'}
+};
 
-  // Multi-select toggle cards
-  function initToggle(containerId, key) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    formData[key] = formData[key] || [];
-    container.querySelectorAll('.toggle-card').forEach(card => {
-      card.addEventListener('click', () => {
-        card.classList.toggle('selected');
-        const val = card.dataset.val;
-        if (card.classList.contains('selected')) {
-          if (!formData[key].includes(val)) formData[key].push(val);
-        } else {
-          formData[key] = formData[key].filter(v => v !== val);
-        }
-      });
-    });
-  }
+/* ===== OTÁZKY: [hodnota, čeština, rumunština, popis cs, popis ro] ===== */
+const STEPS = [
+ {t:['O vás a vašem podnikání','Despre dvs. și activitatea dvs.'],s:['Podle vaší odpovědi nabídnu relevantní činnosti.','În funcție de răspuns, vă voi propune activitățile potrivite.'],f:[
+  {k:'ctype',ty:'one',req:1,l:['Kdo jste?','Cine sunteți?'],o:[['firma','Podnikatel / firma','Antreprenor / firmă'],['kancelar','Účetní nebo daňová kancelář','Birou de contabilitate sau fiscal'],['jiny','Jiný typ klienta','Alt tip de client']]},
+  {k:'name',ty:'text',req:1,l:['Jméno a příjmení / název firmy','Nume și prenume / denumirea firmei'],ph:['Jana Nováková / Firma s.r.o.','Ana Popescu / Firma SRL'],ac:'name'},
+  {k:'business',ty:'text',l:['Čím se zabýváte?','Cu ce vă ocupați?'],ph:['Např. e-shop, služby, účetní služby…','De ex. magazin online, servicii, servicii contabile…']},
+  {k:'lang',ty:'one',l:['V jakém jazyce chcete komunikovat?','În ce limbă preferați să comunicăm?'],o:[['cs','Česky','În cehă'],['ro','Rumunsky','În română'],['mix','Kombinace','Combinat']]}]},
+ {t:['S čím potřebujete pomoci','Cu ce aveți nevoie de ajutor'],s:['Vyberte vše, co se vás týká. Nabízím administrativní podporu. Nenabízím vedení účetnictví, daňové poradenství, právní služby ani úředně ověřené překlady.','Selectați tot ce vi se potrivește. Ofer sprijin administrativ. Nu ofer contabilitate, consultanță fiscală, servicii juridice sau traduceri autorizate.'],f:[
+  {k:'doklady',ty:'many',l:['Faktury a dokumenty','Facturi și documente'],o:{
+   firma:[['evidence','Evidence a třídění přijatých a vydaných faktur','Evidența și sortarea facturilor primite și emise'],['podklady','Příprava podkladů pro účetní','Pregătirea documentelor pentru contabil']],
+   kancelar:[['evidence','Třídění a evidence přijatých a vydaných faktur','Sortarea și evidența facturilor primite și emise'],['prepis','Přepis a zadávání údajů z dokladů','Transcrierea și introducerea datelor din documente'],['uplnost','Kontrola úplnosti podkladů a označování chybějících dokladů','Verificarea completitudinii documentelor și semnalarea celor lipsă'],['podklady','Příprava a kompletace podkladů pro účetní','Pregătirea și completarea documentelor pentru contabil']]}},
+  {k:'prace',ty:'many',l:['Běžná administrativa a práce s daty','Administrație curentă și lucru cu date'],o:{
+   firma:[['excel','Excel, tabulky a evidence','Excel, tabele și evidențe','Včetně evidence majetku','Inclusiv evidența bunurilor'],['kancelar','Běžná kancelářská administrativa','Administrație de birou curentă']],
+   kancelar:[['system','Administrativní práce v účetním systému','Lucrări administrative în sistemul contabil','Podle vašich pokynů a po zaškolení','Conform instrucțiunilor dvs., după instruire'],['excel','Práce v Excelu a aktualizace evidencí','Lucru în Excel și actualizarea evidențelor']]}},
+  {k:'agenda',ty:'many',l:['Organizace administrativní agendy','Organizarea activității administrative'],o:{
+   firma:[['dokumenty','Organizace a archivace dokumentů','Organizarea și arhivarea documentelor'],['terminy','Přehled úkolů a termínů','Evidența sarcinilor și a termenelor']],
+   kancelar:[['dokumenty','Organizace a archivace dokumentů','Organizarea și arhivarea documentelor'],['klienti','Administrativní komunikace s klienty kanceláře o chybějících dokladech','Corespondență administrativă cu clienții biroului privind documentele lipsă'],['terminy','Přehled úkolů a termínů','Evidența sarcinilor și a termenelor']]}},
+  {k:'jazyk',ty:'many',l:['Jazyková podpora','Suport lingvistic'],o:[['komunikace','Písemná komunikace česky a rumunsky','Corespondență în cehă și română'],['preklad','Neoficiální překlady jednoduchých textů','Traduceri neoficiale ale unor texte simple','Čeština ↔ rumunština, bez úředního ověření','Cehă ↔ română, fără autorizare'],['formulare','Příprava formulářů a běžná komunikace s úřady','Pregătirea formularelor și corespondență curentă cu autoritățile','Administrativní stránka, ne poradenství','Partea administrativă, nu consultanță']]},
+  {k:'vlastni',ty:'area',l:['Jiný požadavek','Altă solicitare'],ph:['Popište, s čím byste potřeboval/a pomoci…','Descrieți cu ce aveți nevoie de ajutor…']}]},
+ {t:['Programy a práce s dokumenty','Programe și lucrul cu documente'],s:['Jak to u vás funguje dnes.','Cum funcționează la dvs. în prezent.'],f:[
+  {k:'system',ty:'one',l:['Účetní nebo fakturační systém','Sistem contabil sau de facturare'],o:[['fakturoid','Fakturoid','Fakturoid'],['idoklad','iDoklad','iDoklad'],['abra','ABRA Flexi','ABRA Flexi'],['excel','Excel','Excel'],['papir','Papír / ručně','Hârtie / manual'],['jiny','Jiný','Altul']]},
+  {k:'volume',ty:'one',l:['Kolik dokladů měsíčně?','Câte documente pe lună?'],o:[['do20','Do 20','Până la 20'],['20-50','20–50','20–50'],['50+','Více než 50','Peste 50'],['nevim','Nevím','Nu știu']]},
+  {k:'predani',ty:'one',l:['Jak si budeme předávat doklady?','Cum ne vom transmite documentele?'],o:[['email','E-mail','E-mail'],['whatsapp','WhatsApp','WhatsApp'],['cloud','Cloud / sdílený disk','Cloud / drive partajat']]}]},
+ {t:['Rozsah a forma spolupráce','Volumul și forma colaborării'],s:['Pomůže mi to navrhnout vhodný postup.','Mă ajută să propun o abordare potrivită.'],f:[
+  {k:'rozsah',ty:'one',l:['Jaký rozsah spolupráce očekáváte?','Ce volum de colaborare estimați?'],o:[['narazove','Nárazově','Ocazional'],['tyden','Pravidelně, několik hodin týdně','Regulat, câteva ore pe săptămână'],['dlouhodobe','Dlouhodobá pravidelná spolupráce','Colaborare regulată pe termen lung'],['nevim','Ještě nevím','Încă nu știu']]},
+  {k:'start',ty:'one',l:['Kdy byste chtěl/a začít?','Când ați dori să începem?'],o:[['ihned','Co nejdříve','Cât mai curând'],['mesic','Do měsíce','În cel mult o lună'],['3mesice','Za 2–3 měsíce','Peste 2–3 luni'],['pouze_info','Zatím jen zjišťuji','Deocamdată mă informez']]}]},
+ {t:['Kontakt a další kroky','Contact și pașii următori'],s:['Kam vám mám odpovědět?','Unde să vă răspund?'],f:[
+  {k:'contact',ty:'text',req:1,l:['E-mail nebo telefon','E-mail sau telefon'],ph:['jan@email.cz nebo +420 777 000 000','ana@email.ro sau +40 700 000 000'],ac:'email'},
+  {k:'poznamka',ty:'area',l:['Chcete ještě něco dodat?','Doriți să adăugați ceva?'],ph:['Doplňující informace nebo otázky…','Informații suplimentare sau întrebări…']},
+  {k:'_hint',ty:'hint'},{k:'_priv',ty:'priv'}]}
+];
+const getO=f=>Array.isArray(f.o)?f.o:f.o[D.ctype==='kancelar'?'kancelar':'firma'];
 
-  initChips('typeChips', 'type');
-  initChips('langChips', 'lang');
-  initChips('sysChips', 'system');
-  initChips('volChips', 'volume');
-  initChips('predaniChips', 'predani');
-  initChips('rozsahChips', 'rozsah');
-  initChips('startChips', 'start');
-  initToggle('adminChecks', 'admin');
-  initToggle('extraChecks', 'extra');
-  initToggle('priorityChecks', 'priority');
+/* ===== STAV ===== */
+let L = (navigator.language||'').startsWith('ro')?'ro':'cs';
+let step = 0, D = {}, state = 'form', failed = false, busy = false, errs = {};
+const IX = {cs:1,ro:2}; const li = ()=>L==='ro'?1:0;
+const esc = s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = s=>document.querySelector(s);
 
-  function updateProgress() {
-    const pct = ((currentStep) / totalSteps) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressLabel').textContent = `Krok ${currentStep + 1} z ${totalSteps}`;
-    for (let i = 0; i < totalSteps; i++) {
-      const dot = document.getElementById('dot' + i);
-      dot.className = 'dot';
-      if (i < currentStep) dot.classList.add('done');
-      else if (i === currentStep) dot.classList.add('active');
-    }
-  }
+function collect(){
+ document.querySelectorAll('#form [name]').forEach(e=>{
+  const k=e.name;
+  if(e.type==='radio'){ if(e.checked) D[k]=e.value; }
+  else if(e.type==='checkbox'){
+   if(e.dataset.m){ D[k]=(D[k]||[]).filter(v=>v!==e.value); if(e.checked) D[k].push(e.value); }
+   else D[k]=e.checked;
+  } else D[k]=e.value.trim();
+ });
+}
 
-  function nextStep() {
-    // Basic validation step 0
-    if (currentStep === 0) {
-      const name = document.getElementById('name').value.trim();
-      const contact = document.getElementById('contact').value.trim();
-      if (!name) { alert('Prosím vyplňte jméno nebo název firmy.'); return; }
-      if (!contact) { alert('Prosím zadejte kontakt.'); return; }
-      formData.name = name;
-      formData.business = document.getElementById('business').value.trim();
-      formData.contact = contact;
-    }
-    document.getElementById('step' + currentStep).classList.remove('active');
-    currentStep++;
-    document.getElementById('step' + currentStep).classList.add('active');
-    updateProgress();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+function field(f){
+ const l=f.l?f.l[li()]:"", req=f.req?' <span class="req" aria-hidden="true">*</span>':'', tag=(!f.req&&f.ty!=='priv'&&(f.ty==='text'||f.ty==='area'))?`<span class="opt-tag">(${T[L].optional})</span>`:'';
+ const er=errs[f.k]?`<div class="err" role="alert">${esc(errs[f.k])}</div>`:'';
+ if(f.ty==='hint') return `<div class="hint">${T[L].mailHint}</div>`;
+ if(f.ty==='priv') return `<details class="priv"><summary>${T[L].privSum}</summary>${T[L].priv()}</details>
+  <div class="f ${errs.consent?'invalid':''}"><label class="consent"><input type="checkbox" name="consent" ${D.consent?'checked':''}><span>${T[L].consent} <span class="req" aria-hidden="true">*</span></span></label>${errs.consent?`<div class="err" role="alert">${esc(errs.consent)}</div>`:''}</div>`;
+ if(f.ty==='text') return `<div class="f ${errs[f.k]?'invalid':''}"><label for="${f.k}">${l}${req} ${tag}</label><input type="text" id="${f.k}" name="${f.k}" value="${esc(D[f.k])}" placeholder="${esc(f.ph[li()])}" ${f.ac?`autocomplete="${f.ac}"`:''} ${f.k==='contact'?'inputmode="email"':''} ${f.req?'aria-required="true"':''}>${er}</div>`;
+ if(f.ty==='area') return `<div class="f"><label for="${f.k}">${l} ${tag}</label><textarea id="${f.k}" name="${f.k}" placeholder="${esc(f.ph[li()])}">${esc(D[f.k])}</textarea></div>`;
+ const O=getO(f), many=f.ty==='many', list=O.some(o=>o.length>3);
+ const opts=O.map(o=>{
+  const ck=many?(D[f.k]||[]).includes(o[0]):D[f.k]===o[0];
+  return `<label class="opt"><input type="${many?'checkbox':'radio'}" name="${f.k}" value="${o[0]}" ${many?'data-m="1"':''} ${ck?'checked':''}><span>${esc(o[1+li()])}${o[3]?`<small>${esc(o[3+li()])}</small>`:''}</span></label>`;
+ }).join('');
+ return `<fieldset class="f"><legend>${l}${req}</legend><div class="opts ${list?'list':''}">${opts}</div>${er}</fieldset>`;
+}
 
-  function prevStep() {
-    document.getElementById('step' + currentStep).classList.remove('active');
-    currentStep--;
-    document.getElementById('step' + currentStep).classList.add('active');
-    updateProgress();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+function render(){
+ const t=T[L]; document.documentElement.lang=L;
+ const head=`<div class="top"><div class="brand"><div class="mono" aria-hidden="true">NB</div><div><b>Nikola Biban | ${t.role}</b><span>${t.foot.split('·')[1].trim()}</span></div></div>
+  <div class="lang" role="group" aria-label="Jazyk / Limba"><button type="button" data-l="cs" aria-pressed="${L==='cs'}">CZ</button><button type="button" data-l="ro" aria-pressed="${L==='ro'}">RO</button></div></div>`;
+ let body='';
+ if(state==='manual'){
+  body=`<div class="card done"><div class="mono" aria-hidden="true">NB</div><h2>${t.manH}</h2><p>${t.manP}</p><p><b>${EMAIL}</b></p><div class="nav"><a class="btn p" style="text-align:center;text-decoration:none" href="${mailLink()}">${t.openMail}</a><button class="btn s" id="copy" type="button">${t.copyMsg}</button></div><p><button class="btn s" id="again" type="button" style="flex:none">${t.again}</button></p></div>`;
+ } else if(state==='done'){
+  body=`<div class="card done"><div class="mono" aria-hidden="true">✓</div><h2>${t.okH}</h2><p>${t.okP}</p><button class="btn s" id="again" type="button" style="flex:none">${t.again}</button></div>`;
+ } else {
+  const S=STEPS[step];
+  body=`<div class="hero"><h1>${t.h1}</h1><p class="sub">${t.sub}</p><p class="txt">${t.txt}</p></div>
+  <form class="card" id="form" novalidate>
+   <div class="prog" aria-hidden="true"><i style="width:${(step+1)/STEPS.length*100}%"></i></div>
+   <div class="stepno">${t.step(step+1,STEPS.length)}${step===0?' · '+t.time:''}</div>
+   <h2>${S.t[li()]}</h2><p class="lead">${S.s[li()]}</p>
+   ${S.f.map(field).join('')}
+   <div class="nav">${step>0?`<button class="btn s" type="button" id="back">${t.back}</button>`:''}<button class="btn p" type="submit" id="go" ${busy?'disabled':''}>${busy?t.sending:(step===STEPS.length-1?t.send:t.next)}</button></div>
+  </form>`;
+ }
+ $('#app').innerHTML=head+body+`<p class="foot">${t.foot}</p>`;
+}
 
-  const labels = {
-    type: { osvc_cz:'OSVČ – CZ', osvc_ro:'OSVČ – RO', sro:'s.r.o.', firma:'Firma (jiná)' },
-    lang: { cs:'Čeština', ro:'Rumunština', mix:'Kombinace' },
-    system: { fakturoid:'Fakturoid', idoklad:'iDoklad', excel:'Excel', papir:'Papír/ručně', jiny:'Jiný', zadny:'Žádný' },
-    volume: { do20:'Do 20', '20-50':'20–50', '50+':'50+', nevim:'Netuším' },
-    predani: { email:'E-mail', whatsapp:'WhatsApp', cloud:'Cloud/Drive' },
-    rozsah: { narazove:'Nárazově', '2h_tyden':'~2 hod/týden', pravidelne:'Pravidelně měsíčně', nevim:'Ještě nevím' },
-    start: { ihned:'Co nejdříve', mesic:'Do měsíce', '3mesice':'Za 2–3 měsíce', pouze_info:'Jen se informuji' },
-    admin: { faktury:'Vystavování faktur', doklady:'Evidence dokladů', ucetni_podklady:'Podklady pro účetní', splatnosti:'Kontrola splatností', cashflow:'Cashflow přehledy' },
-    extra: { ucetni_odkaz:'Doporučení účetní', preklad_dokumenty:'Překlady CZ↔RO', urady_ro:'Výklad CZ povinností', komunikace_urady:'Komunikace s úřady' },
-    priority: { rychlost:'Rychlost', peclivost:'Pečlivost', jazyky:'Dvojjazyčnost', diskretnost:'Diskrétnost', cena:'Rozumná cena' }
-  };
+/* ===== VALIDACE ===== */
+const isMail=v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v), isTel=v=>/^\+?[\d\s()\-]{9,}$/.test(v);
+function validate(){
+ errs={};
+ if(step===0){ if(!D.ctype) errs.ctype=T[L].eType; if(!D.name) errs.name=T[L].eName; }
+ if(step===STEPS.length-1){
+  if(!(isMail(D.contact||'')||isTel(D.contact||''))) errs.contact=T[L].eContact;
+  if(!D.consent) errs.consent=T[L].eConsent;
+ }
+ return !Object.keys(errs).length;
+}
 
-  function getLabel(key, val) {
-    if (Array.isArray(val)) return val.map(v => labels[key]?.[v] || v).join(', ') || '—';
-    return labels[key]?.[val] || val || '—';
-  }
+/* ===== SHRNUTÍ (vždy česky pro příjemce) ===== */
+function rows(){
+ const out=[]; STEPS.forEach(S=>S.f.forEach(f=>{
+  if(f.ty==='priv'||f.ty==='hint') return;
+  let v=D[f.k]; if(f.o){ const O=getO(f); v=f.ty==='many'?(v||[]).map(x=>(O.find(o=>o[0]===x)||[])[1]).filter(Boolean).join(', '):(O.find(o=>o[0]===v)||[])[1]; }
+  out.push([f.l[0],v||'—']);
+ })); return out;
+}
+const summary=()=>T[L].intro+'\n\n'+rows().map(r=>r.join(': ')).join('\n');
+const mailLink=()=>`mailto:${EMAIL}?subject=${encodeURIComponent('Dotazník – nový klient: '+(D.name||''))}&body=${encodeURIComponent(summary())}`;
 
-  async function submitForm() {
-    formData.poznamka = document.getElementById('poznamka').value.trim();
+/* ===== ODESLÁNÍ ===== */
+function submit(){ state='manual'; render(); window.scrollTo({top:0,behavior:'smooth'}); }
 
-    const FORMSPREE_ID = 'mvzvaapw'; // sem vloz svuj Formspree kod
-
-    const rows = [
-      { label: 'Jmeno / Firma', val: formData.name || '—' },
-      { label: 'Podnikani', val: formData.business || '—' },
-      { label: 'Kontakt', val: formData.contact || '—' },
-      { label: 'Typ subjektu', val: getLabel('type', formData.type) },
-      { label: 'Jazyk', val: getLabel('lang', formData.lang) },
-      { label: 'Administrativa', val: getLabel('admin', formData.admin) },
-      { label: 'Navazujici sluzby', val: getLabel('extra', formData.extra) },
-      { label: 'Fakturacni system', val: getLabel('system', formData.system) },
-      { label: 'Pocet faktur/mes.', val: getLabel('volume', formData.volume) },
-      { label: 'Predavani dokladu', val: getLabel('predani', formData.predani) },
-      { label: 'Rozsah spoluprace', val: getLabel('rozsah', formData.rozsah) },
-      { label: 'Priority', val: getLabel('priority', formData.priority) },
-      { label: 'Zahajeni', val: getLabel('start', formData.start) },
-      { label: 'Poznamka', val: formData.poznamka || '—' }
-    ];
-
-    if (FORMSPREE_ID && FORMSPREE_ID !== 'TVUJ_KOD_ZDE') {
-      try {
-        const payload = { '_subject': 'Novy klient: ' + (formData.name || 'Nezname') };
-        rows.forEach(r => { payload[r.label] = r.val; });
-        await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } catch(e) { console.error('Formspree chyba:', e); }
-    }
-
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('progressFill').style.width = '100%';
-    document.getElementById('progressLabel').textContent = 'Dokonceno';
-    document.getElementById('dots').style.display = 'none';
-
-    const box = document.getElementById('summaryBox');
-    box.innerHTML = rows.map(r => `
-      <div class="summary-row">
-        <div class="sr-label">${r.label}</div>
-        <div class="sr-value">${r.val}</div>
-      </div>`).join('');
-
-    // Doporučení balíčku
-    buildRecommendation();
-
-    document.getElementById('successScreen').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function buildRecommendation() {
-    const vol = formData.volume;
-    const admin = formData.admin || [];
-    const extra = formData.extra || [];
-    const lang = formData.lang;
-    const rozsah = formData.rozsah;
-
-    // RO modul – rumunština nebo RO služby
-    const isRO = lang === 'ro' || lang === 'mix'
-      || extra.includes('preklad_dokumenty')
-      || extra.includes('urady_ro')
-      || extra.includes('komunikace_urady');
-
-    // Nárazová = per úkol
-    const isNarazove = rozsah === 'narazove';
-
-    // Růst firmy = více faktur, cashflow, splatnosti, pravidelná spolupráce
-    const isRust = !isNarazove && (
-      vol === '20-50' || vol === '50+'
-      || admin.includes('splatnosti')
-      || admin.includes('cashflow')
-      || (rozsah === 'pravidelne' && vol !== 'do20')
-      || admin.length >= 3
-    );
-
-    let html = `<div style="font-size:13px;color:#7A7068;margin-bottom:12px;">Na základě vašich odpovědí doporučuji:</div>`;
-
-    if (isNarazove) {
-      html += `
-        <div class="rec-box secondary">
-          <div class="rec-badge">💡 Bez závazků</div>
-          <h3>Spolupráce per úkol</h3>
-          <div class="rec-price">300–350 Kč / hod.</div>
-          <div class="rec-price-note">Platíte jen skutečně odpracovaný čas</div>
-          <div class="rec-features">
-            <span>✔ Vystavení faktury od ~100 Kč / ks</span>
-            <span>✔ Doklady a evidence dle rozsahu</span>
-            <span>✔ Reporty na vyžádání</span>
-            <span>✔ Min. fakturovaný čas: 15 minut</span>
-          </div>
-          <div class="rec-start">Ozvěte se kdykoliv – začínáme hned</div>
-        </div>
-        <div style="margin:12px 0;text-align:center;font-size:12px;color:#7A7068;">nebo pokud plánujete pravidelněji:</div>
-        <div class="rec-box secondary" style="border-color:#C8A84B;">
-          <div class="rec-badge" style="background:#C8A84B;color:#1E2F5E;">⬆ Tip na start</div>
-          <h3 style="color:#2B3D6B;">Balíček ZÁKLAD</h3>
-          <div class="rec-price" style="color:#2B3D6B;font-size:22px;">1 200 Kč / měs.</div>
-          <div class="rec-price-note">Akční start: 950 Kč první měsíc</div>
-          <div class="rec-features">
-            <span>✔ Do 15 dokladů / měsíc</span>
-            <span>✔ Fakturace + evidence dokladů</span>
-            <span>✔ Měsíční report zisku</span>
-            <span>✔ Příprava podkladů pro účetní</span>
-          </div>
-        </div>`;
-    } else if (isRust) {
-      html += `
-        <div class="rec-box primary">
-          <div class="rec-badge">⭐ Doporučený balíček</div>
-          <h3>Balíček AKTIVNÍ FIRMA</h3>
-          <div class="rec-price">2 800 Kč / měs.</div>
-          <div class="rec-price-note">Akční start: 2 200 Kč první měsíc</div>
-          <div class="rec-features">
-            <span>✔ Do 50 dokladů / měsíc</span>
-            <span>✔ Fakturace + evidence dokladů</span>
-            <span>✔ Měsíční report zisku + 14denní cashflow</span>
-            <span>✔ Hlídání splatností faktur</span>
-            <span>✔ Příprava podkladů pro účetní</span>
-          </div>
-          <div class="rec-start">Ideální pro aktivní OSVČ a rozvíjející se podnikatele</div>
-        </div>`;
-    } else {
-      html += `
-        <div class="rec-box primary">
-          <div class="rec-badge">✔ Ideální start</div>
-          <h3>Balíček ZÁKLAD</h3>
-          <div class="rec-price">1 200 Kč / měs.</div>
-          <div class="rec-price-note">Akční start: 950 Kč první měsíc</div>
-          <div class="rec-features">
-            <span>✔ Do 15 dokladů / měsíc</span>
-            <span>✔ Fakturace + evidence dokladů</span>
-            <span>✔ Měsíční report zisku</span>
-            <span>✔ Příprava podkladů pro účetní</span>
-          </div>
-          <div class="rec-start">Perfektní pro malé OSVČ – klid od papírování</div>
-        </div>`;
-    }
-
-    // RO modul – vždy jako doplněk pokud relevantní
-    if (isRO) {
-      html += `
-      <div class="rec-ro" style="margin-top:10px;">
-        <div class="rec-ro-flag">🇷🇴</div>
-        <h4>+ Speciální modul: RO Podpora</h4>
-        <p>Překlady CZ↔RO, výklad českých povinností, komunikace s úřady v obou jazycích</p>
-        <div class="rec-price">+800–1 200 Kč / měs.</div>
-        <p style="margin-top:4px;font-size:11px;opacity:0.7;">k balíčku · konzultace: 550 Kč / hod.</p>
-      </div>`;
-    }
-
-    // Propojení s účetní
-    if (extra.includes('ucetni_odkaz')) {
-      html += `
-      <div class="rec-box secondary" style="margin-top:10px;">
-        <div class="rec-badge">💼 Bonus</div>
-        <h3>Propojení s účetní</h3>
-        <div class="rec-features">
-          <span>Spolupracuji s osvědčenou účetní – ráda vás propojím pro kompletní péči o vaše finance.</span>
-        </div>
-      </div>`;
-    }
-
-    // Jen zjišťuje info
-    if (formData.start === 'pouze_info') {
-      html += `
-      <div style="margin-top:14px;padding:12px 14px;background:#FFF8F0;border-radius:10px;font-size:13px;color:#7A7068;border-left:3px solid #C8A84B;">
-        💬 Zatím jen zjišťujete? Žádný problém – ozvěte se kdykoliv a vše probereme bez závazků.
-      </div>`;
-    }
-
-    document.getElementById('recommendationBox').innerHTML = html;
-  }
-
-  function buildSummaryText() {
-    const rows = document.querySelectorAll('.summary-row');
-    let text = 'Dobrý den, posílám vyplněný dotazník:\n\n';
-    rows.forEach(r => {
-      const label = r.querySelector('.sr-label').textContent;
-      const val = r.querySelector('.sr-value').textContent;
-      text += `${label}: ${val}\n`;
-    });
-    // Add recommendation
-    const recBox = document.getElementById('recommendationBox');
-    if (recBox) {
-      const recH3 = recBox.querySelector('h3');
-      const recPrice = recBox.querySelector('.rec-price');
-      if (recH3 && recPrice) {
-        text += `\nDoporučený balíček: ${recH3.textContent} – ${recPrice.textContent}`;
-      }
-    }
-    return text;
-  }
-
-  function sendWhatsApp() {
-    const text = buildSummaryText();
-    const phone = '420730663819';
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-  }
-
-  function sendEmail() {
-    const text = buildSummaryText();
-    const subject = encodeURIComponent('Dotazník – nový klient: ' + (formData.name || ''));
-    const body = encodeURIComponent(text);
-    window.open(`mailto:subova_nikola@seznam.cz?subject=${subject}&body=${body}`, '_blank');
-  }
-
-  function copyResults() {
-    const rows = document.querySelectorAll('.summary-row');
-    let text = 'DOTAZNÍK – NOVÝ KLIENT\n' + '='.repeat(30) + '\n';
-    rows.forEach(r => {
-      const label = r.querySelector('.sr-label').textContent;
-      const val = r.querySelector('.sr-value').textContent;
-      text += `${label}: ${val}\n`;
-    });
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Odpovědi zkopírovány do schránky!');
-    }).catch(() => {
-      alert('Kopírování se nezdařilo – vyberte text ručně.');
-    });
-  }
-
-  function restartForm() {
-    location.reload();
-  }
-
-  updateProgress();
+/* ===== UDÁLOSTI ===== */
+document.addEventListener('click',e=>{
+ const lb=e.target.closest('[data-l]');
+ if(lb){ if(state==='form') collect(); L=lb.dataset.l; errs={}; render(); return; }
+ if(e.target.id==='back'){ collect(); errs={}; step--; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+ if(e.target.id==='copy'){ navigator.clipboard.writeText(summary()).then(()=>{e.target.textContent=T[L].copied}).catch(()=>{}); }
+ if(e.target.id==='again'){ D={}; step=0; state='form'; failed=false; errs={}; render(); }
+});
+document.addEventListener('submit',e=>{
+ e.preventDefault(); collect();
+ if(!validate()){ render(); const el=document.querySelector('.err'); if(el) el.scrollIntoView({block:'center',behavior:'smooth'}); return; }
+ if(step<STEPS.length-1){ step++; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+ else submit();
+});
+render();
 </script>
 </body>
 </html>
